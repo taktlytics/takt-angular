@@ -1,5 +1,7 @@
 # @vskstudio/takt-angular
 
+
+> 📚 **Documentation** — [taktlytics.com/docs/wrappers/angular](https://taktlytics.com/docs/wrappers/angular)
 Idiomatic Angular wrapper for [Takt](https://github.com/vskstudio/takt-core), privacy-friendly analytics. Standalone APIs for Angular 17+.
 
 ## Install
