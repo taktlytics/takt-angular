@@ -1,6 +1,6 @@
 {
   "name": "@vskstudio/takt-angular",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Idiomatic Angular wrapper for Takt privacy-friendly analytics",
   "license": "MIT",
   "author": "VSK Studio",
@@ -42,8 +42,8 @@
     "test": "vitest run",
     "e2e": "playwright test",
     "size": "size-limit",
-    "prepublishOnly": "pnpm build",
-    "release": "pnpm build && cd dist && npm publish"
+    "prepublishOnly": "node scripts/guard-publish-dir.mjs",
+    "release": "pnpm build && cd dist && node ../scripts/guard-publish-dir.mjs && npm publish"
   },
   "peerDependencies": {
     "@angular/common": ">=17",

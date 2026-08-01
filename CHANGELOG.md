@@ -1,5 +1,11 @@
 # @vskstudio/takt-angular
 
+## 0.6.2
+
+### Patch Changes
+
+- Republish from `dist/` so the package ships its `exports`/`module`/`types` entry points again. 0.6.1 was published from the repo root (whose `package.json` lacks those fields), which left the package unresolvable — the same regression as 0.5.0. A `prepublishOnly` guard (`scripts/guard-publish-dir.mjs`) now aborts any publish started outside the built `dist/` tree, so the mistake can no longer reach the registry.
+
 ## 0.5.2
 
 ### Patch Changes
