@@ -16,13 +16,13 @@
     "angular",
     "takt"
   ],
-  "homepage": "https://github.com/vskstudio/takt-angular#readme",
+  "homepage": "https://github.com/taktlytics/takt-angular#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vskstudio/takt-angular.git"
+    "url": "git+https://github.com/taktlytics/takt-angular.git"
   },
   "bugs": {
-    "url": "https://github.com/vskstudio/takt-angular/issues"
+    "url": "https://github.com/taktlytics/takt-angular/issues"
   },
   "publishConfig": {
     "access": "public"
