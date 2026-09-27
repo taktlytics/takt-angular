@@ -1,4 +1,4 @@
 [
   { "name": "lib (gzip, angular + core external)", "path": "dist/fesm2022/vskstudio-takt-angular.mjs", "limit": "8.5 kB", "gzip": true, "ignore": ["@angular/core", "@angular/common", "@vskstudio/takt-core", "rxjs", "tslib"] },
-  { "name": "element (gzip, self-contained)", "path": "dist/element/index.js", "limit": "4 kB", "gzip": true }
+  { "name": "element (gzip, self-contained)", "path": "dist/element/index.js", "limit": "4.5 kB", "gzip": true }
 ]

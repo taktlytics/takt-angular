@@ -178,6 +178,30 @@ describe('<takt-analytics> custom element', () => {
     el.remove()
   })
 
+  it('splits redact-routes CSV into redactRoutes', () => {
+    createTakt.mockReturnValue(makeInstance())
+    const el = document.createElement(register())
+    el.setAttribute('redact-routes', '/verify/:token, /reset/[code],')
+    document.body.appendChild(el)
+
+    expect(createTakt).toHaveBeenCalledWith(
+      expect.objectContaining({ redactRoutes: ['/verify/:token', '/reset/[code]'] }),
+    )
+    el.remove()
+  })
+
+  it('leaves redactRoutes undefined without the attribute and never sets routeTemplates', () => {
+    createTakt.mockReturnValue(makeInstance())
+    const el = document.createElement(register())
+    el.setAttribute('redact-routes', ' , ')
+    document.body.appendChild(el)
+
+    const config = createTakt.mock.calls[0][0]
+    expect(config.redactRoutes).toBeUndefined()
+    expect(config.routeTemplates).toBeUndefined()
+    el.remove()
+  })
+
   it('calls enableTagged when tagged attr present, skips when absent', () => {
     const inst = makeInstance()
     createTakt.mockReturnValue(inst)
