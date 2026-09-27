@@ -1,6 +1,6 @@
 {
   "name": "@vskstudio/takt-angular",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "description": "Idiomatic Angular wrapper for Takt privacy-friendly analytics",
   "license": "MIT",
   "author": "VSK Studio",
