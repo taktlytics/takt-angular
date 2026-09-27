@@ -5,7 +5,7 @@ import type { createTakt } from '@vskstudio/takt-core'
 // for token/service values invalid (TS4094).
 export type TaktInstance = Pick<
   ReturnType<typeof createTakt>,
-  'track' | 'pageview' | 'enableSpa' | 'enableOutbound' | 'enableFiles' | 'enable404' | 'enableTagged' | 'optOut' | 'optIn'
+  'track' | 'pageview' | 'enableSpa' | 'enableOutbound' | 'enableFiles' | 'enable404' | 'enableTagged' | 'optOut' | 'optIn' | 'isOptedOut'
 >
 
 /** Configuration for {@link provideTakt}. Mirrors the React wrapper's props. */
@@ -52,4 +52,5 @@ export interface TaktConfig {
   scrubUrl?: (url: string) => string
   /** Auto-track clicks on `[data-takt-tag]` elements. */
   tagged?: boolean
+  debug?: boolean
 }

@@ -8,6 +8,9 @@ describe('SSR safety (Node, no DOM globals)', () => {
     expect(typeof mod.TaktService).toBe('function')
     expect(typeof mod.TaktEventDirective).toBe('function')
     expect(mod.TAKT_CONFIG).toBeDefined()
+    expect(typeof mod.optOut).toBe('function')
+    expect(typeof mod.optIn).toBe('function')
+    expect(typeof mod.isOptedOut).toBe('function')
   })
 
   it('element entry imports without registering (no customElements on server)', async () => {

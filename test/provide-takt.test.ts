@@ -5,7 +5,12 @@ import { provideTakt } from '../src/lib/provide-takt'
 import { TaktService } from '../src/lib/takt.service'
 
 const createTakt = vi.fn()
-vi.mock('@vskstudio/takt-core', () => ({ createTakt: (...a: unknown[]) => createTakt(...a) }))
+vi.mock('@vskstudio/takt-core', () => ({
+  createTakt: (...a: unknown[]) => createTakt(...a),
+  optOut: vi.fn(),
+  optIn: vi.fn(),
+  isOptedOut: vi.fn(() => false),
+}))
 
 function makeInstance() {
   return {
@@ -17,6 +22,7 @@ function makeInstance() {
     enable404: vi.fn(() => vi.fn()),
     optOut: vi.fn(),
     optIn: vi.fn(),
+    isOptedOut: vi.fn(() => false),
   }
 }
 
@@ -123,7 +129,17 @@ describe('provideTakt', () => {
     )
   })
 
-  it('exposes optOut/optIn through the booted instance', () => {
+  it('forwards debug to createTakt', () => {
+    const inst = makeInstance()
+    createTakt.mockReturnValue(inst)
+
+    TestBed.configureTestingModule({ providers: [provideTakt({ debug: true })] })
+    TestBed.inject(TaktService)
+
+    expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ debug: true }))
+  })
+
+  it('exposes optOut/optIn/isOptedOut through the booted instance', () => {
     const inst = makeInstance()
     createTakt.mockReturnValue(inst)
 
@@ -131,9 +147,11 @@ describe('provideTakt', () => {
     const svc = TestBed.inject(TaktService)
     svc.optOut()
     svc.optIn()
+    svc.isOptedOut()
 
     expect(inst.optOut).toHaveBeenCalledOnce()
     expect(inst.optIn).toHaveBeenCalledOnce()
+    expect(inst.isOptedOut).toHaveBeenCalledOnce()
   })
 
   it('does NOT boot on the server', () => {

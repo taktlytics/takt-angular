@@ -42,6 +42,7 @@ export function provideTakt(config: TaktConfig = {}): EnvironmentProviders {
           queryParams: c.queryParams,
           exclude: c.exclude,
           scrubUrl: c.scrubUrl,
+          debug: c.debug,
         })
 
         const disposers: Array<() => void> = []

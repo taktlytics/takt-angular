@@ -28,15 +28,24 @@ describe('TaktService (no-op before init)', () => {
     expect(() => svc.optIn()).not.toThrow()
   })
 
+  it('isOptedOut reflects the stored choice before init', () => {
+    const svc = TestBed.inject(TaktService)
+    svc.optOut()
+    expect(svc.isOptedOut()).toBe(true)
+    svc.optIn()
+    expect(svc.isOptedOut()).toBe(false)
+  })
+
   it('delegates to the live instance once set', () => {
     const svc = TestBed.inject(TaktService)
-    const inst = { track: vi.fn(), pageview: vi.fn(), optOut: vi.fn(), optIn: vi.fn() }
+    const inst = { track: vi.fn(), pageview: vi.fn(), optOut: vi.fn(), optIn: vi.fn(), isOptedOut: vi.fn(() => true) }
     svc._setInstance(inst as never)
 
     svc.track('Signup', { props: { plan: 'pro' } })
     svc.pageview()
     svc.optOut()
     svc.optIn()
+    expect(svc.isOptedOut()).toBe(true)
 
     expect(inst.track).toHaveBeenCalledWith('Signup', { props: { plan: 'pro' } })
     expect(inst.pageview).toHaveBeenCalledOnce()

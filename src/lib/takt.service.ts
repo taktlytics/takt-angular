@@ -4,8 +4,8 @@ import { noopTakt } from './noop'
 import type { TaktInstance } from './types'
 
 /**
- * Injectable facade over the live Takt instance. Every method is a
- * never-throwing no-op before {@link provideTakt} boots or on the server.
+ * Injectable facade over the live Takt instance. Tracking is a never-throwing
+ * no-op before {@link provideTakt} boots or on the server; consent goes to core.
  */
 @Injectable({ providedIn: 'root' })
 export class TaktService {
@@ -35,5 +35,9 @@ export class TaktService {
 
   optIn(): void {
     this.instance.optIn()
+  }
+
+  isOptedOut(): boolean {
+    return this.instance.isOptedOut()
   }
 }
