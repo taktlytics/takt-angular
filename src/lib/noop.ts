@@ -1,3 +1,4 @@
+import { optOut, optIn, isOptedOut } from '@vskstudio/takt-core'
 import type { TaktInstance } from './types'
 
 let _noop: TaktInstance | null = null
@@ -19,8 +20,9 @@ export function noopTakt(): TaktInstance {
     enableFiles: noDispose,
     enable404: noDispose,
     enableTagged: noDispose,
-    optOut: () => {},
-    optIn: () => {},
+    optOut,
+    optIn,
+    isOptedOut,
   }
   return _noop as TaktInstance
 }

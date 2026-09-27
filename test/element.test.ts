@@ -21,6 +21,7 @@ function makeInstance() {
     enableTagged: vi.fn(() => vi.fn()),
     optOut: vi.fn(),
     optIn: vi.fn(),
+    isOptedOut: vi.fn(() => false),
   }
 }
 

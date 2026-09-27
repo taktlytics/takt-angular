@@ -22,6 +22,7 @@ function makeInstance() {
     enable404: vi.fn(() => vi.fn()),
     optOut: vi.fn(),
     optIn: vi.fn(),
+    isOptedOut: vi.fn(() => false),
   }
 }
 
@@ -138,7 +139,7 @@ describe('provideTakt', () => {
     expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ debug: true }))
   })
 
-  it('exposes optOut/optIn through the booted instance', () => {
+  it('exposes optOut/optIn/isOptedOut through the booted instance', () => {
     const inst = makeInstance()
     createTakt.mockReturnValue(inst)
 
@@ -146,9 +147,11 @@ describe('provideTakt', () => {
     const svc = TestBed.inject(TaktService)
     svc.optOut()
     svc.optIn()
+    svc.isOptedOut()
 
     expect(inst.optOut).toHaveBeenCalledOnce()
     expect(inst.optIn).toHaveBeenCalledOnce()
+    expect(inst.isOptedOut).toHaveBeenCalledOnce()
   })
 
   it('does NOT boot on the server', () => {
