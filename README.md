@@ -36,7 +36,7 @@ SSR-safe: on the server `provideTakt` is inert and `TaktService` no-ops.
 
 ## Track events imperatively
 
-Inject `TaktService` anywhere. Every method is a never-throwing no-op before init or on the server.
+Inject `TaktService` anywhere. Tracking methods are never-throwing no-ops before init or on the server, while the consent methods always work (see [Consent](#consent)).
 
 ```ts
 import { Component, inject } from '@angular/core'
@@ -53,7 +53,30 @@ export class CheckoutComponent {
     })
   }
 
-  // takt.pageview(), takt.optOut(), takt.optIn() are also available.
+  // takt.pageview(), takt.optOut(), takt.optIn(), takt.isOptedOut() are also available.
+}
+```
+
+## Consent
+
+Consent works before `provideTakt()` has booted and on pages that never install it: `TaktService.optOut()`, `optIn()` and `isOptedOut()` go straight to the stored choice, and so do the `optOut`, `optIn` and `isOptedOut` functions exported by the package. A consent banner can therefore render first, and the instance created later honours the choice.
+
+```ts
+import { Component, signal } from '@angular/core'
+import { isOptedOut, optIn, optOut } from '@vskstudio/takt-angular'
+
+@Component({
+  selector: 'app-analytics-toggle',
+  standalone: true,
+  template: `<button (click)="toggle()">{{ blocked() ? 'Enable analytics' : 'Disable analytics' }}</button>`,
+})
+export class AnalyticsToggleComponent {
+  readonly blocked = signal(isOptedOut())
+
+  toggle() {
+    this.blocked() ? optIn() : optOut()
+    this.blocked.set(isOptedOut())
+  }
 }
 ```
 
@@ -110,7 +133,7 @@ const series = await stats.timeseries({ period: '30d' })
 
 The badge `alt` text is an overridable input (defaults to `"takt"`). The optional `host` input must be an absolute `http(s)` URL — core validates it and throws on anything else (e.g. a `javascript:` URL).
 
-`badgeUrl`, `embedUrl`, `PublicApiError` and the widget/stats types are re-exported from core.
+`badgeUrl`, `embedUrl`, `PublicApiError`, `optOut`, `optIn`, `isOptedOut` and the widget/stats types are re-exported from core.
 
 ## Framework-agnostic custom element
 
@@ -125,6 +148,8 @@ defineTaktElement() // also auto-runs on import
 <takt-analytics domain="example.com" outbound files></takt-analytics>
 ```
 
+Add the `debug` attribute to log each payload to the console before it is sent. It applies only when present, and `debug="false"` turns it off.
+
 Via CDN (bundles core, no build step):
 
 ```html
@@ -137,7 +162,7 @@ Via CDN (bundles core, no build step):
 | Export | Description |
 | --- | --- |
 | `provideTakt(config?)` | `EnvironmentProviders` — install at bootstrap. |
-| `TaktService` | Injectable: `track`, `pageview`, `optOut`, `optIn`, `instance`. |
+| `TaktService` | Injectable: `track`, `pageview`, `optOut`, `optIn`, `isOptedOut`, `instance`. |
 | `TaktEventDirective` | `[taktEvent]` standalone directive for click tracking. |
 | `TaktBadgeComponent` | `<takt-badge>` standalone component — server-rendered SVG badge. |
 | `TaktEmbedComponent` | `<takt-embed>` standalone component — server-rendered iframe. |
@@ -163,8 +188,9 @@ Via CDN (bundles core, no build step):
 | `trackQuery` | `false` | Include the query string in page URLs sent with events. |
 | `queryParams` | `[]` | Allowlist of query-param names to keep when `trackQuery` is on. |
 | `exclude` | `[]` | Path prefixes never tracked, e.g. `['/app', '/account']` (segment-bounded, checked at send time). |
-| `scrubUrl` | — | Transform the URL before it is sent. Function prop — dev-controlled, config only (cannot be set via the `<takt-analytics>` element attribute). |
+| `scrubUrl` | — | Transform URLs before they are sent (page, referrer, and the `url` prop of outbound-link and file-download events). Function prop — dev-controlled, config only (cannot be set via the `<takt-analytics>` element attribute). |
 | `tagged` | `false` | Auto-track clicks on `[data-takt-tag]` elements. |
+| `debug` | `false` | Log each payload to the console before sending. |
 
 ## License
 
