@@ -52,4 +52,5 @@ export interface TaktConfig {
   scrubUrl?: (url: string) => string
   /** Auto-track clicks on `[data-takt-tag]` elements. */
   tagged?: boolean
+  debug?: boolean
 }

@@ -3,7 +3,12 @@ import { createTaktAnalyticsElement } from '../src/element/TaktAnalyticsElement'
 import { defineTaktElement } from '../src/element/index'
 
 const createTakt = vi.fn()
-vi.mock('@vskstudio/takt-core', () => ({ createTakt: (...a: unknown[]) => createTakt(...a) }))
+vi.mock('@vskstudio/takt-core', () => ({
+  createTakt: (...a: unknown[]) => createTakt(...a),
+  optOut: vi.fn(),
+  optIn: vi.fn(),
+  isOptedOut: vi.fn(() => false),
+}))
 
 function makeInstance() {
   return {
@@ -137,6 +142,27 @@ describe('<takt-analytics> custom element', () => {
     expect(createTakt).toHaveBeenCalledWith(
       expect.objectContaining({ queryParams: ['utm_source', 'utm_medium'] }),
     )
+    el.remove()
+  })
+
+  it('forwards debug presence as debug: true', () => {
+    const inst = makeInstance()
+    createTakt.mockReturnValue(inst)
+    const el = document.createElement(register())
+    el.setAttribute('debug', '')
+    document.body.appendChild(el)
+
+    expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ debug: true }))
+    el.remove()
+  })
+
+  it('leaves debug undefined when the attribute is absent', () => {
+    const inst = makeInstance()
+    createTakt.mockReturnValue(inst)
+    const el = document.createElement(register())
+    document.body.appendChild(el)
+
+    expect(createTakt.mock.calls[0][0].debug).toBeUndefined()
     el.remove()
   })
 

@@ -31,6 +31,7 @@ export function createTaktAnalyticsElement(): CustomElementConstructor {
         enabled: this.hasAttribute('enabled') ? truthy(attr('enabled')) : undefined,
         sampleRate: sampleRateRaw !== null && Number.isFinite(parseFloat(sampleRateRaw)) ? parseFloat(sampleRateRaw) : undefined,
         trackQuery: this.hasAttribute('track-query') ? truthy(attr('track-query')) : undefined,
+        debug: this.hasAttribute('debug') ? truthy(attr('debug')) : undefined,
         queryParams: queryParams?.length ? queryParams : undefined,
         exclude: exclude?.length ? exclude : undefined,
       })

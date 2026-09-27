@@ -5,7 +5,12 @@ import { provideTakt } from '../src/lib/provide-takt'
 import { TaktService } from '../src/lib/takt.service'
 
 const createTakt = vi.fn()
-vi.mock('@vskstudio/takt-core', () => ({ createTakt: (...a: unknown[]) => createTakt(...a) }))
+vi.mock('@vskstudio/takt-core', () => ({
+  createTakt: (...a: unknown[]) => createTakt(...a),
+  optOut: vi.fn(),
+  optIn: vi.fn(),
+  isOptedOut: vi.fn(() => false),
+}))
 
 function makeInstance() {
   return {
@@ -121,6 +126,16 @@ describe('provideTakt', () => {
         excludeLocalhost: false,
       }),
     )
+  })
+
+  it('forwards debug to createTakt', () => {
+    const inst = makeInstance()
+    createTakt.mockReturnValue(inst)
+
+    TestBed.configureTestingModule({ providers: [provideTakt({ debug: true })] })
+    TestBed.inject(TaktService)
+
+    expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ debug: true }))
   })
 
   it('exposes optOut/optIn through the booted instance', () => {
