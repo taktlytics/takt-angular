@@ -1,4 +1,4 @@
-import type { createTakt } from '@vskstudio/takt-core'
+import type { createTakt, RouteTemplateResolver } from '@vskstudio/takt-core'
 
 // Public structural surface of core's Analytics. Picking the public methods
 // drops the class's private members, which otherwise make the emitted .d.ts
@@ -53,4 +53,7 @@ export interface TaktConfig {
   /** Auto-track clicks on `[data-takt-tag]` elements. */
   tagged?: boolean
   debug?: boolean
+  redactRoutes?: string[]
+  routeTemplates?: boolean
+  routeTemplate?: RouteTemplateResolver
 }

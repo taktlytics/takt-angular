@@ -1,4 +1,4 @@
-import { PLATFORM_ID } from '@angular/core'
+import { ApplicationRef, ENVIRONMENT_INITIALIZER, Injectable, inject, PendingTasks, PLATFORM_ID } from '@angular/core'
 import { TestBed } from '@angular/core/testing'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { provideTakt } from '../src/lib/provide-takt'
@@ -137,6 +137,100 @@ describe('provideTakt', () => {
     TestBed.inject(TaktService)
 
     expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ debug: true }))
+  })
+
+  it('forwards redactRoutes and routeTemplates to createTakt', () => {
+    createTakt.mockReturnValue(makeInstance())
+
+    TestBed.configureTestingModule({
+      providers: [provideTakt({ redactRoutes: ['/verify/:token'], routeTemplates: true })],
+    })
+    TestBed.inject(TaktService)
+
+    expect(createTakt).toHaveBeenCalledWith(
+      expect.objectContaining({ redactRoutes: ['/verify/:token'], routeTemplates: true }),
+    )
+  })
+
+  it('leaves routeTemplate undefined when no resolver is given', () => {
+    createTakt.mockReturnValue(makeInstance())
+
+    TestBed.configureTestingModule({ providers: [provideTakt()] })
+    TestBed.inject(TaktService)
+
+    expect(createTakt.mock.calls[0][0].routeTemplate).toBeUndefined()
+  })
+
+  it('runs routeTemplate inside the injection context so it can inject()', () => {
+    @Injectable({ providedIn: 'root' })
+    class FakeRouter {
+      template = '/users/:id'
+    }
+    createTakt.mockReturnValue(makeInstance())
+
+    TestBed.configureTestingModule({
+      providers: [provideTakt({ routeTemplates: true, routeTemplate: () => inject(FakeRouter).template })],
+    })
+    TestBed.inject(TaktService)
+
+    const resolver = createTakt.mock.calls[0][0].routeTemplate as () => string
+    expect(resolver()).toBe('/users/:id')
+    TestBed.inject(FakeRouter).template = '/blog/:slug'
+    expect(resolver()).toBe('/blog/:slug')
+  })
+
+  function holdStability(): { release: () => void } {
+    const hold = { release: () => {} }
+    TestBed.configureTestingModule({
+      providers: [
+        {
+          provide: ENVIRONMENT_INITIALIZER,
+          multi: true,
+          useValue: () => {
+            hold.release = inject(PendingTasks).add()
+          },
+        },
+        provideTakt({ routeTemplates: true, routeTemplate: () => '/users/:id' }),
+      ],
+    })
+    return hold
+  }
+
+  it('defers the initial pageview until the app is stable when routeTemplates is on', async () => {
+    const inst = makeInstance()
+    createTakt.mockReturnValue(inst)
+    const hold = holdStability()
+
+    TestBed.inject(TaktService)
+    await Promise.resolve()
+    expect(inst.pageview).not.toHaveBeenCalled()
+
+    hold.release()
+    await TestBed.inject(ApplicationRef).whenStable()
+    expect(inst.pageview).toHaveBeenCalledOnce()
+  })
+
+  it('skips the deferred initial pageview when destroyed before the app is stable', async () => {
+    const inst = makeInstance()
+    createTakt.mockReturnValue(inst)
+    const hold = holdStability()
+
+    TestBed.inject(TaktService)
+    TestBed.resetTestingModule()
+    hold.release()
+    await Promise.resolve()
+
+    expect(inst.pageview).not.toHaveBeenCalled()
+  })
+
+  it('fires the initial pageview synchronously when routeTemplates is on without a resolver', () => {
+    const inst = makeInstance()
+    createTakt.mockReturnValue(inst)
+
+    TestBed.configureTestingModule({ providers: [provideTakt({ routeTemplates: true })] })
+    TestBed.inject(TaktService)
+
+    expect(inst.pageview).toHaveBeenCalledOnce()
   })
 
   it('exposes optOut/optIn/isOptedOut through the booted instance', () => {
