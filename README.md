@@ -148,6 +148,8 @@ defineTaktElement() // also auto-runs on import
 <takt-analytics domain="example.com" outbound files></takt-analytics>
 ```
 
+Add `redact-routes` with a comma-separated list of patterns to send sensitive paths as their pattern: `<takt-analytics redact-routes="/verify/:token, /reset/:code"></takt-analytics>`. The element has no router, so it does not support `routeTemplates`.
+
 Add the `debug` attribute to log each payload to the console before it is sent. It applies only when present, and `debug="false"` turns it off.
 
 Via CDN (bundles core, no build step):
@@ -156,6 +158,40 @@ Via CDN (bundles core, no build step):
 <script type="module" src="https://unpkg.com/@vskstudio/takt-angular/dist/element/index.js"></script>
 <takt-analytics></takt-analytics>
 ```
+
+## Route redaction
+
+Query strings are stripped by default, but path segments are sent as they are: `/verify/abc123` leaks the token. List the sensitive routes with `redactRoutes` and a matching path is sent as its pattern, while every other path keeps its real value.
+
+```ts
+provideTakt({
+  redactRoutes: ['/verify/:token', '/invoices/:id'],
+})
+```
+
+`/verify/abc123` is then sent as `/verify/:token`. Patterns accept Angular syntax (`:param`, `:param?`, `*`, `**`) as well as `[param]`, `[[optional]]`, `[...rest]` and `(group)`. The rule covers the page URL, same-origin referrers, outbound and download links, and 404 paths.
+
+For a fully private app, `routeTemplates: true` sends every page as its route template (`/users/42` becomes `/users/:id`). Give it a `routeTemplate` resolver: it runs in the injection context of `provideTakt`, so it can `inject()` the router, and `routeTemplateFromSnapshot` turns the router snapshot into a template.
+
+```ts
+import { inject } from '@angular/core'
+import { provideRouter, Router } from '@angular/router'
+import { provideTakt, routeTemplateFromSnapshot } from '@vskstudio/takt-angular'
+
+bootstrapApplication(AppComponent, {
+  providers: [
+    provideRouter(routes),
+    provideTakt({
+      routeTemplates: true,
+      routeTemplate: () => routeTemplateFromSnapshot(inject(Router).routerState.snapshot.root),
+    }),
+  ],
+})
+```
+
+`routeTemplateFromSnapshot` follows `firstChild` from the root, joins the non-empty `routeConfig.path` values (layout routes with `path: ''` are skipped) and returns `/` when none is set. In this mode the initial pageview waits for the app to become stable, so the initial navigation has matched its route before the template is read. When the resolver returns nothing, `redactRoutes` still applies and the real path is sent otherwise. The package does not depend on `@angular/router`: the helper only reads the snapshot shape.
+
+On a public site, prefer `redactRoutes`: `routeTemplates` merges every article into one row.
 
 ## API
 
@@ -167,6 +203,7 @@ Via CDN (bundles core, no build step):
 | `TaktBadgeComponent` | `<takt-badge>` standalone component — server-rendered SVG badge. |
 | `TaktEmbedComponent` | `<takt-embed>` standalone component — server-rendered iframe. |
 | `createStats(opts?)` | Public stats client (`summary`/`timeseries`/`realtime`/`breakdown`). |
+| `routeTemplateFromSnapshot(root)` | Builds a route template (`/users/:id`) from a router snapshot, for `routeTemplate`. |
 | `TAKT_CONFIG` | InjectionToken holding the resolved config. |
 | `defineTaktElement` | Registers `<takt-analytics>` (from `./element`). |
 
@@ -191,6 +228,9 @@ Via CDN (bundles core, no build step):
 | `scrubUrl` | — | Transform URLs before they are sent (page, referrer, and the `url` prop of outbound-link and file-download events). Function prop — dev-controlled, config only (cannot be set via the `<takt-analytics>` element attribute). |
 | `tagged` | `false` | Auto-track clicks on `[data-takt-tag]` elements. |
 | `debug` | `false` | Log each payload to the console before sending. |
+| `redactRoutes` | `[]` | Route patterns sent as the pattern instead of the real path, e.g. `['/verify/:token']`. See [Route redaction](#route-redaction). |
+| `routeTemplates` | `false` | Send every page as its route template instead of the real path. Needs `routeTemplate`. |
+| `routeTemplate` | none | Returns the current route template. Runs in the injection context, so it can `inject(Router)`. Used when `routeTemplates` is on. |
 
 ## License
 
