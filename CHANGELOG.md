@@ -1,5 +1,11 @@
 # @vskstudio/takt-angular
 
+## 0.9.0
+
+### Minor Changes
+
+- Requires `@vskstudio/takt-core` 0.11.0 or later, and the self-contained `/element` build now bundles it: route redaction applies to outbound-link and file-download destinations and to the `404` path, `exclude` matches case-insensitively on the percent-decoded path, and the server client refuses a plain `http://` endpoint outside localhost.
+
 ## 0.8.0
 
 ### Minor Changes
