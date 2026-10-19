@@ -1,5 +1,11 @@
 # @vskstudio/takt-angular
 
+## 0.9.1
+
+### Patch Changes
+
+- Published to npm through Trusted Publishing (OIDC) instead of a long-lived token. No runtime change.
+
 ## 0.9.0
 
 ### Minor Changes
