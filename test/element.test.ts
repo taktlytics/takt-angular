@@ -62,14 +62,24 @@ describe('<takt-analytics> custom element', () => {
     el.remove()
   })
 
-  it('enables 404 reporting only when the track404 attribute is present', () => {
+  it.each(['track-404', 'track404'])('enables 404 reporting when the %s attribute is present', (attribute) => {
     const inst = makeInstance()
     createTakt.mockReturnValue(inst)
     const el = document.createElement(register())
-    el.setAttribute('track404', '')
+    el.setAttribute(attribute, '')
     document.body.appendChild(el)
 
     expect(inst.enable404).toHaveBeenCalledOnce()
+    el.remove()
+  })
+
+  it('does not enable 404 reporting without a track-404 or track404 attribute', () => {
+    const inst = makeInstance()
+    createTakt.mockReturnValue(inst)
+    const el = document.createElement(register())
+    document.body.appendChild(el)
+
+    expect(inst.enable404).not.toHaveBeenCalled()
     el.remove()
   })
 
@@ -217,6 +227,57 @@ describe('<takt-analytics> custom element', () => {
     const el2 = document.createElement(register())
     document.body.appendChild(el2)
     expect(inst2.enableTagged).not.toHaveBeenCalled()
+    el2.remove()
+  })
+
+  it.each(['false', '0'])('disables redactUndecodablePaths with redact-undecodable-paths="%s"', (value) => {
+    createTakt.mockReturnValue(makeInstance())
+    const el = document.createElement(register())
+    el.setAttribute('redact-undecodable-paths', value)
+    document.body.appendChild(el)
+
+    expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ redactUndecodablePaths: false }))
+    el.remove()
+  })
+
+  it('keeps redactUndecodablePaths on when the attribute is absent', () => {
+    createTakt.mockReturnValue(makeInstance())
+    const el = document.createElement(register())
+    document.body.appendChild(el)
+
+    expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ redactUndecodablePaths: true }))
+    el.remove()
+  })
+
+  it('splits file-extensions CSV into enableFiles when files is present', () => {
+    const inst = makeInstance()
+    createTakt.mockReturnValue(inst)
+    const el = document.createElement(register())
+    el.setAttribute('files', '')
+    el.setAttribute('file-extensions', 'pdf, zip,')
+    document.body.appendChild(el)
+
+    expect(inst.enableFiles).toHaveBeenCalledWith(['pdf', 'zip'])
+    el.remove()
+  })
+
+  it('passes undefined to enableFiles without file-extensions, and enables nothing without files', () => {
+    const inst = makeInstance()
+    createTakt.mockReturnValue(inst)
+    const el = document.createElement(register())
+    el.setAttribute('file-extensions', 'pdf')
+    document.body.appendChild(el)
+
+    expect(inst.enableFiles).not.toHaveBeenCalled()
+    el.remove()
+
+    const inst2 = makeInstance()
+    createTakt.mockReturnValue(inst2)
+    const el2 = document.createElement(register())
+    el2.setAttribute('files', '')
+    document.body.appendChild(el2)
+
+    expect(inst2.enableFiles).toHaveBeenCalledWith(undefined)
     el2.remove()
   })
 })

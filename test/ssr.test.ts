@@ -11,6 +11,7 @@ describe('SSR safety (Node, no DOM globals)', () => {
     expect(typeof mod.optOut).toBe('function')
     expect(typeof mod.optIn).toBe('function')
     expect(typeof mod.isOptedOut).toBe('function')
+    expect(typeof mod.normalizeHost).toBe('function')
   })
 
   it('element entry imports without registering (no customElements on server)', async () => {
