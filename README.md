@@ -1,7 +1,7 @@
 # @vskstudio/takt-angular
 
 
-> 📚 **Documentation** — [taktlytics.com/docs/wrappers/angular](https://taktlytics.com/docs/wrappers/angular)
+> 📚 **Documentation**: [taktlytics.com/docs/wrappers/angular](https://taktlytics.com/docs/wrappers/angular)
 
 Idiomatic Angular wrapper for [Takt](https://github.com/taktlytics/takt-core), privacy-friendly analytics. Standalone APIs for Angular 17+.
 
@@ -131,7 +131,7 @@ const summary = await stats.summary({ period: '7d' })
 const series = await stats.timeseries({ period: '30d' })
 ```
 
-The badge `alt` text is an overridable input (defaults to `"takt"`). The optional `host` input must be an absolute `http(s)` URL — core validates it and throws on anything else (e.g. a `javascript:` URL).
+The badge `alt` text is an overridable input (defaults to `"takt"`). The optional `host` input must be an absolute `http(s)` URL. Core validates it and throws on anything else (e.g. a `javascript:` URL).
 
 `badgeUrl`, `embedUrl`, `PublicApiError`, `optOut`, `optIn`, `isOptedOut` and the widget/stats types are re-exported from core.
 
@@ -197,11 +197,11 @@ On a public site, prefer `redactRoutes`: `routeTemplates` merges every article i
 
 | Export | Description |
 | --- | --- |
-| `provideTakt(config?)` | `EnvironmentProviders` — install at bootstrap. |
+| `provideTakt(config?)` | `EnvironmentProviders`: install at bootstrap. |
 | `TaktService` | Injectable: `track`, `pageview`, `optOut`, `optIn`, `isOptedOut`, `instance`. |
 | `TaktEventDirective` | `[taktEvent]` standalone directive for click tracking. |
-| `TaktBadgeComponent` | `<takt-badge>` standalone component — server-rendered SVG badge. |
-| `TaktEmbedComponent` | `<takt-embed>` standalone component — server-rendered iframe. |
+| `TaktBadgeComponent` | `<takt-badge>` standalone component: server-rendered SVG badge. |
+| `TaktEmbedComponent` | `<takt-embed>` standalone component: server-rendered iframe. |
 | `createStats(opts?)` | Public stats client (`summary`/`timeseries`/`realtime`/`breakdown`). |
 | `routeTemplateFromSnapshot(root)` | Builds a route template (`/users/:id`) from a router snapshot, for `routeTemplate`. |
 | `TAKT_CONFIG` | InjectionToken holding the resolved config. |
@@ -213,7 +213,7 @@ On a public site, prefer `redactRoutes`: `routeTemplates` merges every article i
 | --- | --- | --- |
 | `domain` | `location.hostname` | Site identifier sent with every event. |
 | `endpoint` | `/api/event` | Ingestion endpoint. |
-| `scriptOrigin` | — | First-party origin (`{origin}/api/event`); `endpoint` takes precedence. |
+| `scriptOrigin` | n/a | First-party origin (`{origin}/api/event`); `endpoint` takes precedence. |
 | `outbound` | `false` | Auto-track outbound link clicks. |
 | `files` | `false` | Auto-track file downloads (or pass `string[]` to restrict extensions). |
 | `track404` | `false` | Report a `404` event on error pages (`[data-takt-404]` / `<meta name="takt:404">`). |
@@ -225,7 +225,7 @@ On a public site, prefer `redactRoutes`: `routeTemplates` merges every article i
 | `trackQuery` | `false` | Include the query string in page URLs sent with events. |
 | `queryParams` | `[]` | Allowlist of query-param names to keep when `trackQuery` is on. |
 | `exclude` | `[]` | Path prefixes never tracked, e.g. `['/app', '/account']` (segment-bounded, checked at send time). |
-| `scrubUrl` | — | Transform URLs before they are sent (page, referrer, and the `url` prop of outbound-link and file-download events). Function prop — dev-controlled, config only (cannot be set via the `<takt-analytics>` element attribute). |
+| `scrubUrl` | n/a | Transform URLs before they are sent (page, referrer, and the `url` prop of outbound-link and file-download events). Function prop: dev-controlled, config only (cannot be set via the `<takt-analytics>` element attribute). |
 | `tagged` | `false` | Auto-track clicks on `[data-takt-tag]` elements. |
 | `debug` | `false` | Log each payload to the console before sending. |
 | `redactRoutes` | `[]` | Route patterns sent as the pattern instead of the real path, e.g. `['/verify/:token']`. See [Route redaction](#route-redaction). |

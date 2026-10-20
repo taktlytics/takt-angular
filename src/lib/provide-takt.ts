@@ -17,8 +17,8 @@ import { TAKT_CONFIG } from './tokens'
 import type { TaktConfig } from './types'
 
 /**
- * Standalone install path. Registers the config and an initializer that — only
- * in the browser — creates the instance, enables the requested autocapture,
+ * Standalone install path. Registers the config and an initializer that, only
+ * in the browser, creates the instance, enables the requested autocapture,
  * fires the initial pageview, and disposes everything on app destroy.
  */
 export function provideTakt(config: TaktConfig = {}): EnvironmentProviders {

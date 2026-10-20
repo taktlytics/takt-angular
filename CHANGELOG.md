@@ -28,7 +28,7 @@
 
 ### Patch Changes
 
-- Republish from `dist/` so the package ships its `exports`/`module`/`types` entry points again. 0.6.1 was published from the repo root (whose `package.json` lacks those fields), which left the package unresolvable — the same regression as 0.5.0. A `prepublishOnly` guard (`scripts/guard-publish-dir.mjs`) now aborts any publish started outside the built `dist/` tree, so the mistake can no longer reach the registry.
+- Republish from `dist/` so the package ships its `exports`/`module`/`types` entry points again. 0.6.1 was published from the repo root (whose `package.json` lacks those fields), which left the package unresolvable, the same regression as 0.5.0. A `prepublishOnly` guard (`scripts/guard-publish-dir.mjs`) now aborts any publish started outside the built `dist/` tree, so the mistake can no longer reach the registry.
 
 ## 0.5.2
 
@@ -66,7 +66,7 @@
 ### Minor Changes
 
 - Initial release. Idiomatic Angular wrapper for `@vskstudio/takt-core`:
-  - `provideTakt(config)` — standalone `EnvironmentProviders` that boots Takt in the browser only, fires the initial pageview, enables spa/outbound/files autocapture, and disposes on app destroy.
-  - `TaktService` — root-provided injectable (`track`, `pageview`, `optOut`, `optIn`, `instance`), a never-throwing no-op before init and on the server.
-  - `TaktEventDirective` — `[taktEvent]` standalone directive for declarative click tracking with `[taktProps]` and `[taktRevenue]`.
-  - `./element` — the framework-agnostic `<takt-analytics>` custom element with a self-contained CDN bundle.
+  - `provideTakt(config)`: standalone `EnvironmentProviders` that boots Takt in the browser only, fires the initial pageview, enables spa/outbound/files autocapture, and disposes on app destroy.
+  - `TaktService`: root-provided injectable (`track`, `pageview`, `optOut`, `optIn`, `instance`), a never-throwing no-op before init and on the server.
+  - `TaktEventDirective`: `[taktEvent]` standalone directive for declarative click tracking with `[taktProps]` and `[taktRevenue]`.
+  - `./element`: the framework-agnostic `<takt-analytics>` custom element with a self-contained CDN bundle.

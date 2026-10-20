@@ -15,7 +15,7 @@ export interface TaktConfig {
   /** Ingestion endpoint. Defaults to `https://taktlytics.com/api/event` (the hosted Takt origin); pass `/api/event` for a same-origin first-party proxy. */
   endpoint?: string
   /**
-   * First-party origin to derive the endpoint from (`{origin}/api/event`) —
+   * First-party origin to derive the endpoint from (`{origin}/api/event`):
    * a custom domain you proxy through to dodge ad-blockers
    * (`endpoint` wins over it).
    */
