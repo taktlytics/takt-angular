@@ -9,7 +9,6 @@ export default defineConfig({
     include: ['test/**/*.test.ts'],
     environment: 'jsdom',
     setupFiles: ['./test/setup.ts'],
-    // AnalogJS recommends inlining for proper Angular ESM interop.
     server: { deps: { inline: ['@analogjs/vitest-angular'] } },
   },
 })
