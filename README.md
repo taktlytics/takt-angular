@@ -23,7 +23,7 @@ import { AppComponent } from './app/app.component'
 bootstrapApplication(AppComponent, {
   providers: [
     provideTakt({
-      // domain defaults to location.hostname, endpoint to /api/event
+      // domain defaults to location.hostname, endpoint to https://taktlytics.com/api/event
       outbound: true, // auto-track outbound links
       files: true, // auto-track downloads (or pass ['pdf', 'zip'])
       // spa: true, respectDnt: true, excludeLocalhost: true (defaults)
@@ -137,7 +137,7 @@ The badge `alt` text is an overridable input (defaults to `"takt"`). The optiona
 
 ## Framework-agnostic custom element
 
-For non-Angular pages (or a plain `<script>` tag), use the self-contained `<takt-analytics>` element. Privacy attributes are on by default; set them to `false` to disable.
+For non-Angular pages (or a plain `<script>` tag), use the self-contained `<takt-analytics>` element. Privacy attributes are on by default; set them to `"false"` or `"0"` to disable.
 
 ```ts
 import { defineTaktElement } from '@vskstudio/takt-angular/element'
@@ -150,13 +150,33 @@ defineTaktElement() // also auto-runs on import
 
 Add `redact-routes` with a comma-separated list of patterns to send sensitive paths as their pattern: `<takt-analytics redact-routes="/verify/:token, /reset/:code"></takt-analytics>`. The element has no router, so it does not support `routeTemplates`.
 
-More attributes: `track-404` reports `404` events (`track404` is accepted as an alias), `file-extensions` (comma-separated, read only when `files` is present) restricts downloads to those extensions, and `redact-undecodable-paths="false"` decodes undecodable paths leniently instead of masking them. Attributes are split on commas, so a `<regex>` route constraint containing a comma (such as `{1,3}`) does not fit in `redact-routes`: use `provideTakt` for it.
+| Attribute | Default | Description |
+| --- | --- | --- |
+| `domain` | `location.hostname` | Site identifier sent with every event. |
+| `endpoint` | `https://taktlytics.com/api/event` | Ingestion endpoint. Pass `/api/event` for a same-origin proxy. |
+| `script-origin` | none | First-party origin, endpoint becomes `{origin}/api/event`. `endpoint` wins. |
+| `outbound` | off | Auto-track outbound link clicks. Presence only. |
+| `files` | off | Auto-track file downloads. Presence only. |
+| `file-extensions` | all | Comma-separated extensions, read only when `files` is present. Example: `pdf, zip`. |
+| `track-404` | off | Report `404` events on error pages. Alias `track404`. Presence only. |
+| `tagged` | off | Auto-track clicks on `[data-takt-tag]` elements. Presence only. |
+| `spa` | on | Track SPA navigations. `"false"` or `"0"` disables. |
+| `respect-dnt` | on | Suppress events when Do Not Track is enabled. `"false"` or `"0"` disables. |
+| `exclude-localhost` | on | Suppress events on localhost and private IP ranges. `"false"` or `"0"` disables. |
+| `enabled` | on | `"false"` or `"0"` disables tracking entirely. |
+| `sample-rate` | `1` | Fraction of sessions to record, between `0` and `1`. Example: `sample-rate="0.5"`. |
+| `track-query` | off | Include the query string in page URLs. Presence enables; `"false"` or `"0"` disables. |
+| `query-params` | none | Comma-separated query params kept when the query string is stripped. Example: `utm_source, utm_medium`. |
+| `exclude` | none | Comma-separated path prefixes never tracked. Example: `/app, /account`. |
+| `redact-routes` | none | Comma-separated route patterns sent as their pattern. Example: `/verify/:token, /reset/:code`. |
+| `redact-undecodable-paths` | on | `"false"` or `"0"` decodes undecodable paths leniently instead of masking them. |
+| `debug` | off | Log each payload to the console before sending. Presence enables; `"false"` or `"0"` disables. |
+
+Attributes are split on commas, so a `<regex>` route constraint containing a comma (such as `{1,3}`) does not fit in `redact-routes`: use `provideTakt` for it.
 
 ```html
 <takt-analytics files file-extensions="pdf, zip" track-404 redact-undecodable-paths="false"></takt-analytics>
 ```
-
-Add the `debug` attribute to log each payload to the console before it is sent. It applies only when present, and `debug="false"` turns it off.
 
 Via CDN (bundles core, no build step):
 
@@ -220,7 +240,7 @@ On a public site, prefer `redactRoutes`: `routeTemplates` merges every article i
 | Option | Default | Description |
 | --- | --- | --- |
 | `domain` | `location.hostname` | Site identifier sent with every event. |
-| `endpoint` | `/api/event` | Ingestion endpoint. |
+| `endpoint` | `https://taktlytics.com/api/event` | Ingestion endpoint. Pass `/api/event` for a same-origin first-party proxy. |
 | `scriptOrigin` | n/a | First-party origin (`{origin}/api/event`); `endpoint` takes precedence. |
 | `outbound` | `false` | Auto-track outbound link clicks. |
 | `files` | `false` | Auto-track file downloads (or pass `string[]` to restrict extensions). |
@@ -230,8 +250,8 @@ On a public site, prefer `redactRoutes`: `routeTemplates` merges every article i
 | `excludeLocalhost` | `true` | Suppress events on localhost and private IP ranges. |
 | `enabled` | `true` | Set to `false` to disable tracking entirely. |
 | `sampleRate` | `1` | Fraction of sessions to record, between `0` and `1`. |
-| `trackQuery` | `false` | Include the query string in page URLs sent with events. |
-| `queryParams` | `[]` | Allowlist of query-param names to keep when `trackQuery` is on. |
+| `trackQuery` | `false` | Include the whole query string in page URLs sent with events. |
+| `queryParams` | `[]` | Allowlist of query-param names kept when the query string is stripped (i.e. `trackQuery` is off). |
 | `exclude` | `[]` | Path prefixes never tracked, e.g. `['/app', '/account']`. Segment-bounded, case-insensitive, trailing slash ignored, matched on the percent-decoded path, checked at send time. |
 | `scrubUrl` | n/a | Transform URLs before they are sent (page, referrer, and the `url` prop of outbound-link and file-download events). Function prop: dev-controlled, config only (cannot be set via the `<takt-analytics>` element attribute). |
 | `tagged` | `false` | Auto-track clicks on `[data-takt-tag]` elements. |
