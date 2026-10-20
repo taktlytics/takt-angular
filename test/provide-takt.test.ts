@@ -103,6 +103,16 @@ describe('provideTakt', () => {
     expect(svc.instance).not.toBe(inst)
   })
 
+  it('forwards redactUndecodablePaths to createTakt', () => {
+    const inst = makeInstance()
+    createTakt.mockReturnValue(inst)
+
+    TestBed.configureTestingModule({ providers: [provideTakt({ redactUndecodablePaths: false })] })
+    TestBed.inject(TaktService)
+
+    expect(createTakt).toHaveBeenCalledWith(expect.objectContaining({ redactUndecodablePaths: false }))
+  })
+
   it('forwards privacy config to createTakt', () => {
     const inst = makeInstance()
     createTakt.mockReturnValue(inst)

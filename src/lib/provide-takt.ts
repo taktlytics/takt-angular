@@ -50,6 +50,7 @@ export function provideTakt(config: TaktConfig = {}): EnvironmentProviders {
           scrubUrl: c.scrubUrl,
           debug: c.debug,
           redactRoutes: c.redactRoutes,
+          redactUndecodablePaths: c.redactUndecodablePaths,
           routeTemplates: c.routeTemplates,
           routeTemplate: resolveRouteTemplate
             ? () => runInInjectionContext(injector, resolveRouteTemplate)
