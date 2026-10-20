@@ -133,7 +133,7 @@ const series = await stats.timeseries({ period: '30d' })
 
 The badge `alt` text is an overridable input (defaults to `"takt"`). The optional `host` input must be an absolute `http(s)` URL. Core validates it and throws on anything else (e.g. a `javascript:` URL).
 
-`badgeUrl`, `embedUrl`, `normalizeHost`, `PublicApiError`, `optOut`, `optIn`, `isOptedOut`, the `TrackOptions` type and the widget/stats types are re-exported from core.
+`badgeUrl`, `embedUrl`, `normalizeHost`, `PublicApiError`, `optOut`, `optIn`, `isOptedOut`, the `TrackOptions` and `Payload` types and the widget/stats types are re-exported from core.
 
 ## Framework-agnostic custom element
 
