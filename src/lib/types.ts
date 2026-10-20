@@ -50,7 +50,7 @@ export interface TaktConfig {
    * cannot be set via a custom-element attribute.
    */
   scrubUrl?: (url: string) => string
-  /** Auto-track clicks on `[data-takt-tag]` elements. */
+  /** Auto-track clicks on `[data-takt-event]` elements. */
   tagged?: boolean
   debug?: boolean
   redactRoutes?: string[]

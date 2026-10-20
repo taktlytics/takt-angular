@@ -159,7 +159,7 @@ Add `redact-routes` with a comma-separated list of patterns to send sensitive pa
 | `files` | off | Auto-track file downloads. Presence only. |
 | `file-extensions` | all | Comma-separated extensions, read only when `files` is present. Example: `pdf, zip`. |
 | `track-404` | off | Report `404` events on error pages. Alias `track404`. Presence only. |
-| `tagged` | off | Auto-track clicks on `[data-takt-tag]` elements. Presence only. |
+| `tagged` | off | Auto-track clicks on `[data-takt-event]` elements. Presence only. |
 | `spa` | on | Track SPA navigations. `"false"` or `"0"` disables. |
 | `respect-dnt` | on | Suppress events when Do Not Track is enabled. `"false"` or `"0"` disables. |
 | `exclude-localhost` | on | Suppress events on localhost and private IP ranges. `"false"` or `"0"` disables. |
@@ -254,7 +254,7 @@ On a public site, prefer `redactRoutes`: `routeTemplates` merges every article i
 | `queryParams` | `[]` | Allowlist of query-param names kept when the query string is stripped (i.e. `trackQuery` is off). |
 | `exclude` | `[]` | Path prefixes never tracked, e.g. `['/app', '/account']`. Segment-bounded, case-insensitive, trailing slash ignored, matched on the percent-decoded path, checked at send time. |
 | `scrubUrl` | n/a | Transform URLs before they are sent (page, referrer, and the `url` prop of outbound-link and file-download events). Function prop: dev-controlled, config only (cannot be set via the `<takt-analytics>` element attribute). |
-| `tagged` | `false` | Auto-track clicks on `[data-takt-tag]` elements. |
+| `tagged` | `false` | Auto-track clicks on `[data-takt-event]` elements. |
 | `debug` | `false` | Log each payload to the console before sending. |
 | `redactRoutes` | `[]` | Route patterns sent as the pattern instead of the real path, e.g. `['/verify/:token']`. Accepts brace syntax (`{token}`) and `<regex>` constraints. See [Route redaction](#route-redaction). |
 | `redactUndecodablePaths` | `true` | A path that cannot be decoded is masked as `/[redacted]` when routes are configured. `false` decodes it leniently instead, as takt-core-php does. |
