@@ -5,6 +5,11 @@ import { createTakt } from '@vskstudio/takt-core'
 // are on when the attribute exists at all.
 const truthy = (v: string | null): boolean => v !== 'false' && v !== '0'
 
+const list = (v: string | null): string[] | undefined => {
+  const items = v ? v.split(',').map((s) => s.trim()).filter(Boolean) : []
+  return items.length ? items : undefined
+}
+
 // Built lazily: referencing HTMLElement at module load throws under SSR (Node),
 // so the class is created only when registration runs in a DOM environment.
 export function createTaktAnalyticsElement(): CustomElementConstructor {
@@ -14,18 +19,6 @@ export function createTaktAnalyticsElement(): CustomElementConstructor {
     connectedCallback(): void {
       const attr = (name: string): string | null => this.getAttribute(name)
       const sampleRateRaw = attr('sample-rate')
-      const queryParamsRaw = attr('query-params')
-      const queryParams = queryParamsRaw
-        ? queryParamsRaw.split(',').map((s) => s.trim()).filter(Boolean)
-        : undefined
-      const excludeRaw = attr('exclude')
-      const exclude = excludeRaw
-        ? excludeRaw.split(',').map((s) => s.trim()).filter(Boolean)
-        : undefined
-      const redactRoutesRaw = attr('redact-routes')
-      const redactRoutes = redactRoutesRaw
-        ? redactRoutesRaw.split(',').map((s) => s.trim()).filter(Boolean)
-        : undefined
       const takt = createTakt({
         domain: attr('domain') ?? undefined,
         endpoint: attr('endpoint') ?? undefined,
@@ -36,13 +29,14 @@ export function createTaktAnalyticsElement(): CustomElementConstructor {
         sampleRate: sampleRateRaw !== null && Number.isFinite(parseFloat(sampleRateRaw)) ? parseFloat(sampleRateRaw) : undefined,
         trackQuery: this.hasAttribute('track-query') ? truthy(attr('track-query')) : undefined,
         debug: this.hasAttribute('debug') ? truthy(attr('debug')) : undefined,
-        queryParams: queryParams?.length ? queryParams : undefined,
-        exclude: exclude?.length ? exclude : undefined,
-        redactRoutes: redactRoutes?.length ? redactRoutes : undefined,
+        queryParams: list(attr('query-params')),
+        exclude: list(attr('exclude')),
+        redactRoutes: list(attr('redact-routes')),
+        redactUndecodablePaths: truthy(attr('redact-undecodable-paths')),
       })
       if (truthy(attr('spa'))) this.disposers.push(takt.enableSpa())
       if (this.hasAttribute('outbound')) this.disposers.push(takt.enableOutbound())
-      if (this.hasAttribute('files')) this.disposers.push(takt.enableFiles())
+      if (this.hasAttribute('files')) this.disposers.push(takt.enableFiles(list(attr('file-extensions'))))
       if (this.hasAttribute('track404')) this.disposers.push(takt.enable404())
       if (this.hasAttribute('tagged')) this.disposers.push(takt.enableTagged())
       takt.pageview()

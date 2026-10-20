@@ -8,10 +8,11 @@ export { routeTemplateFromSnapshot } from './lib/route-template'
 export type { RouteSnapshotLike } from './lib/route-template'
 export type { TaktConfig, TaktInstance } from './lib/types'
 
-export { createStats, PublicApiError, badgeUrl, embedUrl, optOut, optIn, isOptedOut } from '@vskstudio/takt-core'
+export { createStats, PublicApiError, badgeUrl, embedUrl, normalizeHost, optOut, optIn, isOptedOut } from '@vskstudio/takt-core'
 export type {
   Config,
   RouteTemplateResolver,
+  TrackOptions,
   BadgeOptions,
   EmbedOptions,
   BadgeVariant,

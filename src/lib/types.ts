@@ -54,6 +54,7 @@ export interface TaktConfig {
   tagged?: boolean
   debug?: boolean
   redactRoutes?: string[]
+  redactUndecodablePaths?: boolean
   routeTemplates?: boolean
   routeTemplate?: RouteTemplateResolver
 }
