@@ -133,7 +133,7 @@ const series = await stats.timeseries({ period: '30d' })
 
 The badge `alt` text is an overridable input (defaults to `"takt"`). The optional `host` input must be an absolute `http(s)` URL. Core validates it and throws on anything else (e.g. a `javascript:` URL).
 
-`badgeUrl`, `embedUrl`, `PublicApiError`, `optOut`, `optIn`, `isOptedOut` and the widget/stats types are re-exported from core.
+`badgeUrl`, `embedUrl`, `normalizeHost`, `PublicApiError`, `optOut`, `optIn`, `isOptedOut`, the `TrackOptions` type and the widget/stats types are re-exported from core.
 
 ## Framework-agnostic custom element
 
@@ -149,6 +149,12 @@ defineTaktElement() // also auto-runs on import
 ```
 
 Add `redact-routes` with a comma-separated list of patterns to send sensitive paths as their pattern: `<takt-analytics redact-routes="/verify/:token, /reset/:code"></takt-analytics>`. The element has no router, so it does not support `routeTemplates`.
+
+More attributes: `track404` reports `404` events, `file-extensions` (comma-separated, read only when `files` is present) restricts downloads to those extensions, and `redact-undecodable-paths="false"` decodes undecodable paths leniently instead of masking them. Attributes are split on commas, so a `<regex>` route constraint containing a comma (such as `{1,3}`) does not fit in `redact-routes`: use `provideTakt` for it.
+
+```html
+<takt-analytics files file-extensions="pdf, zip" track404 redact-undecodable-paths="false"></takt-analytics>
+```
 
 Add the `debug` attribute to log each payload to the console before it is sent. It applies only when present, and `debug="false"` turns it off.
 
@@ -169,7 +175,9 @@ provideTakt({
 })
 ```
 
-`/verify/abc123` is then sent as `/verify/:token`. Patterns accept Angular syntax (`:param`, `:param?`, `*`, `**`) as well as `[param]`, `[[optional]]`, `[...rest]` and `(group)`. The rule covers the page URL, same-origin referrers, outbound and download links, and 404 paths.
+`/verify/abc123` is then sent as `/verify/:token`. Patterns accept Angular syntax (`:param`, `:param?`, `*`, `**`) as well as `[param]`, `[[optional]]`, `[...rest]` and `(group)`. The brace syntax of takt-core-php also works: `{id}`, `{id?}` and `{id<\d+>}`. The rule covers the page URL, same-origin referrers, outbound and download links, and 404 paths.
+
+Matching is case-insensitive, decodes percent-encoding (at most five passes), normalizes dot segments and repeated slashes, and ignores matrix parameters. A `<regex>` constraint must stay in the restricted grammar of takt-core (printable ASCII, a few escapes, bounded quantifiers, no range spanning `/`). A route with a constraint outside that grammar, or one that is too ambiguous to match in bounded time, masks every path it would match as `/[redacted]`. A path that cannot be decoded is masked the same way; `redactUndecodablePaths: false` decodes it leniently instead. A masked path also loses its query string and fragment.
 
 For a fully private app, `routeTemplates: true` sends every page as its route template (`/users/42` becomes `/users/:id`). Give it a `routeTemplate` resolver: it runs in the injection context of `provideTakt`, so it can `inject()` the router, and `routeTemplateFromSnapshot` turns the router snapshot into a template.
 
@@ -224,11 +232,12 @@ On a public site, prefer `redactRoutes`: `routeTemplates` merges every article i
 | `sampleRate` | `1` | Fraction of sessions to record, between `0` and `1`. |
 | `trackQuery` | `false` | Include the query string in page URLs sent with events. |
 | `queryParams` | `[]` | Allowlist of query-param names to keep when `trackQuery` is on. |
-| `exclude` | `[]` | Path prefixes never tracked, e.g. `['/app', '/account']` (segment-bounded, checked at send time). |
+| `exclude` | `[]` | Path prefixes never tracked, e.g. `['/app', '/account']`. Segment-bounded, case-insensitive, trailing slash ignored, matched on the percent-decoded path, checked at send time. |
 | `scrubUrl` | n/a | Transform URLs before they are sent (page, referrer, and the `url` prop of outbound-link and file-download events). Function prop: dev-controlled, config only (cannot be set via the `<takt-analytics>` element attribute). |
 | `tagged` | `false` | Auto-track clicks on `[data-takt-tag]` elements. |
 | `debug` | `false` | Log each payload to the console before sending. |
-| `redactRoutes` | `[]` | Route patterns sent as the pattern instead of the real path, e.g. `['/verify/:token']`. See [Route redaction](#route-redaction). |
+| `redactRoutes` | `[]` | Route patterns sent as the pattern instead of the real path, e.g. `['/verify/:token']`. Accepts brace syntax (`{token}`) and `<regex>` constraints. See [Route redaction](#route-redaction). |
+| `redactUndecodablePaths` | `true` | A path that cannot be decoded is masked as `/[redacted]` when routes are configured. `false` decodes it leniently instead, as takt-core-php does. |
 | `routeTemplates` | `false` | Send every page as its route template instead of the real path. Needs `routeTemplate`. |
 | `routeTemplate` | none | Returns the current route template. Runs in the injection context, so it can `inject(Router)`. Used when `routeTemplates` is on. |
 
