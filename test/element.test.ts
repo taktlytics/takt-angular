@@ -62,14 +62,24 @@ describe('<takt-analytics> custom element', () => {
     el.remove()
   })
 
-  it('enables 404 reporting only when the track404 attribute is present', () => {
+  it.each(['track-404', 'track404'])('enables 404 reporting when the %s attribute is present', (attribute) => {
     const inst = makeInstance()
     createTakt.mockReturnValue(inst)
     const el = document.createElement(register())
-    el.setAttribute('track404', '')
+    el.setAttribute(attribute, '')
     document.body.appendChild(el)
 
     expect(inst.enable404).toHaveBeenCalledOnce()
+    el.remove()
+  })
+
+  it('does not enable 404 reporting without a track-404 or track404 attribute', () => {
+    const inst = makeInstance()
+    createTakt.mockReturnValue(inst)
+    const el = document.createElement(register())
+    document.body.appendChild(el)
+
+    expect(inst.enable404).not.toHaveBeenCalled()
     el.remove()
   })
 
