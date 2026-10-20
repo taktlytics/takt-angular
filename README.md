@@ -217,7 +217,7 @@ bootstrapApplication(AppComponent, {
 })
 ```
 
-`routeTemplateFromSnapshot` follows `firstChild` from the root, joins the non-empty `routeConfig.path` values (layout routes with `path: ''` are skipped) and returns `/` when none is set. In this mode the initial pageview waits for the app to become stable, so the initial navigation has matched its route before the template is read. When the resolver returns nothing, `redactRoutes` still applies and the real path is sent otherwise. The package does not depend on `@angular/router`: the helper only reads the snapshot shape.
+`routeTemplateFromSnapshot` follows `firstChild` from the root, joins the non-empty `routeConfig.path` values (layout routes with `path: ''` are skipped) and returns `/` when none is set. In this mode the initial pageview waits for the app to become stable, so the initial navigation has matched its route before the template is read. When the resolver returns nothing, the pageview and the 404 path carry the `redactRoutes` pattern if one covers the route, and `/[redacted]` otherwise, with no query or hash. Every download is sent as `/[redacted]` on any host, and every referrer is reduced to its origin. The package does not depend on `@angular/router`: the helper only reads the snapshot shape.
 
 On a public site, prefer `redactRoutes`: `routeTemplates` merges every article into one row.
 
@@ -258,8 +258,8 @@ On a public site, prefer `redactRoutes`: `routeTemplates` merges every article i
 | `debug` | `false` | Log each payload to the console before sending. |
 | `redactRoutes` | `[]` | Route patterns sent as the pattern instead of the real path, e.g. `['/verify/:token']`. Accepts brace syntax (`{token}`) and `<regex>` constraints. See [Route redaction](#route-redaction). |
 | `redactUndecodablePaths` | `true` | A path that cannot be decoded is masked as `/[redacted]` when routes are configured. `false` decodes it leniently instead, as takt-core-php does. |
-| `routeTemplates` | `false` | Send every page as its route template instead of the real path. Needs `routeTemplate`. |
-| `routeTemplate` | none | Returns the current route template. Runs in the injection context, so it can `inject(Router)`. Used when `routeTemplates` is on. |
+| `routeTemplates` | `false` | Send every page as its route template instead of the real path. Downloads and referrers are masked too. Needs `routeTemplate`. |
+| `routeTemplate` | none | Returns the current route template. Runs in the injection context, so it can `inject(Router)`. Used when `routeTemplates` is on. When it returns nothing, the path is masked (see [Route redaction](#route-redaction)). |
 
 ## License
 
