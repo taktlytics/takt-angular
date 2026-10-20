@@ -157,7 +157,7 @@ Add `redact-routes` with a comma-separated list of patterns to send sensitive pa
 | `script-origin` | none | First-party origin, endpoint becomes `{origin}/api/event`. `endpoint` wins. |
 | `outbound` | off | Auto-track outbound link clicks. Presence only. |
 | `files` | off | Auto-track file downloads. Presence only. |
-| `file-extensions` | `pdf, zip, dmg, xlsx, csv, doc, docx, ppt, pptx, rar, 7z, gz, mp3, mp4, wav, avi, mov` | Comma-separated extensions, read only when `files` is present. Example: `pdf, zip`. |
+| `file-extensions` | `pdf, zip, dmg, xlsx, csv, doc, docx, ppt, pptx, rar, 7z, gz, mp3, mp4, wav, avi, mov, exe, apk, mkv, txt` | Comma-separated extensions, read only when `files` is present. Example: `pdf, zip`. |
 | `track-404` | off | Report `404` events on error pages. Alias `track404`. Presence only. |
 | `tagged` | off | Auto-track clicks on `[data-takt-event]` elements. Presence only. |
 | `spa` | on | Track SPA navigations. `"false"` or `"0"` disables. |
