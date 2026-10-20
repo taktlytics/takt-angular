@@ -150,10 +150,10 @@ defineTaktElement() // also auto-runs on import
 
 Add `redact-routes` with a comma-separated list of patterns to send sensitive paths as their pattern: `<takt-analytics redact-routes="/verify/:token, /reset/:code"></takt-analytics>`. The element has no router, so it does not support `routeTemplates`.
 
-More attributes: `track404` reports `404` events, `file-extensions` (comma-separated, read only when `files` is present) restricts downloads to those extensions, and `redact-undecodable-paths="false"` decodes undecodable paths leniently instead of masking them. Attributes are split on commas, so a `<regex>` route constraint containing a comma (such as `{1,3}`) does not fit in `redact-routes`: use `provideTakt` for it.
+More attributes: `track-404` reports `404` events (`track404` is accepted as an alias), `file-extensions` (comma-separated, read only when `files` is present) restricts downloads to those extensions, and `redact-undecodable-paths="false"` decodes undecodable paths leniently instead of masking them. Attributes are split on commas, so a `<regex>` route constraint containing a comma (such as `{1,3}`) does not fit in `redact-routes`: use `provideTakt` for it.
 
 ```html
-<takt-analytics files file-extensions="pdf, zip" track404 redact-undecodable-paths="false"></takt-analytics>
+<takt-analytics files file-extensions="pdf, zip" track-404 redact-undecodable-paths="false"></takt-analytics>
 ```
 
 Add the `debug` attribute to log each payload to the console before it is sent. It applies only when present, and `debug="false"` turns it off.
