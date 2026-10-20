@@ -13,6 +13,7 @@ export type {
   Config,
   RouteTemplateResolver,
   TrackOptions,
+  Payload,
   BadgeOptions,
   EmbedOptions,
   BadgeVariant,
